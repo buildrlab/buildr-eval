@@ -1,0 +1,25 @@
+# buildr-eval basic example
+# Run with: buildr-eval run examples/basic.eval.yml
+
+name: "My LLM Test Suite"
+provider:
+  type: anthropic
+  model: claude-3-haiku-20240307
+  apiKeyEnv: ANTHROPIC_API_KEY
+
+tests:
+  - name: "Summarize text"
+    prompt: "Summarize this in one sentence: The quick brown fox jumps over the lazy dog."
+    assert:
+      - type: contains
+        value: "fox"
+      - type: max_tokens
+        value: 30
+
+  - name: "JSON output"
+    prompt: "Return a JSON object with keys name and age for a 30-year-old named Alice."
+    assert:
+      - type: json_valid
+      - type: json_contains
+        key: name
+        value: Alice

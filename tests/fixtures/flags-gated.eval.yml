@@ -1,0 +1,17 @@
+name: "Flags Gated Suite"
+provider:
+  type: anthropic
+  model: claude-3-haiku-20240307
+  apiKeyEnv: ANTHROPIC_API_KEY
+
+flags:
+  apiUrl: https://api.flags.buildrlab.com/v1
+  sdkKey: test-sdk-key
+  suite_gate: eval-suite-haiku
+
+tests:
+  - name: "Gated test"
+    prompt: "Say hello"
+    assert:
+      - type: contains
+        value: "hello"

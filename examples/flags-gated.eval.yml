@@ -1,0 +1,29 @@
+# buildr-eval example with BuildrFlags gate
+# This suite only runs if the "eval-suite-haiku" flag is enabled in BuildrFlags.
+# Run with: buildr-eval run examples/flags-gated.eval.yml
+
+name: "Gated Haiku Eval Suite"
+provider:
+  type: anthropic
+  model: claude-3-haiku-20240307
+  apiKeyEnv: ANTHROPIC_API_KEY
+
+flags:
+  apiUrl: https://api.flags.buildrlab.com/v1
+  sdkKey: ${BUILDRFLAGS_SDK_KEY}
+  suite_gate: eval-suite-haiku
+
+tests:
+  - name: "Summarize text"
+    prompt: "Summarize this in one sentence: The quick brown fox jumps over the lazy dog."
+    assert:
+      - type: contains
+        value: "fox"
+      - type: max_tokens
+        value: 30
+
+  - name: "Regex check"
+    prompt: "What is 2 + 2?"
+    assert:
+      - type: regex
+        value: "4"

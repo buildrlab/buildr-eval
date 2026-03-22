@@ -1,0 +1,54 @@
+{
+  "name": "@buildrlab/buildr-eval",
+  "version": "0.1.0",
+  "description": "Lightweight LLM evaluation runner with BuildrFlags feature flag gates",
+  "type": "module",
+  "bin": {
+    "buildr-eval": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "llm",
+    "eval",
+    "evaluation",
+    "testing",
+    "ai",
+    "anthropic",
+    "openai",
+    "buildrflags",
+    "feature-flags"
+  ],
+  "author": "BuildrLab",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "commander": "^13.1.0",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
