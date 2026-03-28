@@ -1,0 +1,39 @@
+name: basic-eval-example
+provider:
+  type: anthropic
+  model: claude-3-haiku-20240307
+  apiKeyEnv: ANTHROPIC_API_KEY
+tests:
+  - name: greeting
+    prompt: "Say hello in one word"
+    assert:
+      - type: max_tokens
+        value: 5
+      - type: contains
+        value: "hello"
+
+  - name: starts-with-assertion
+    prompt: "Start your response with 'Sure'"
+    assert:
+      - type: starts_with
+        value: "Sure"
+
+  - name: json-output
+    prompt: "Return a JSON object with a key 'status' set to 'ok'"
+    assert:
+      - type: json_valid
+      - type: json_contains
+        key: status
+        value: ok
+
+  - name: minimum-response
+    prompt: "Write a 50-word explanation of what an API is"
+    assert:
+      - type: min_tokens
+        value: 40
+
+  - name: quality-check
+    prompt: "Write a haiku about TypeScript"
+    assert:
+      - type: llm_rubric
+        value: "The response should be a proper haiku (5-7-5 syllable structure)"
