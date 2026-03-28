@@ -45,6 +45,30 @@ export function evaluateAssertion(
       };
     }
 
+    case 'starts_with': {
+      const expected = String(assertion.value);
+      const passed = output.startsWith(expected);
+      return {
+        type: 'starts_with',
+        passed,
+        reason: passed
+          ? undefined
+          : `Expected output to start with: "${expected}"`,
+      };
+    }
+
+    case 'ends_with': {
+      const expected = String(assertion.value);
+      const passed = output.endsWith(expected);
+      return {
+        type: 'ends_with',
+        passed,
+        reason: passed
+          ? undefined
+          : `Expected output to end with: "${expected}"`,
+      };
+    }
+
     case 'max_tokens': {
       const tokenCount = output.split(/\s+/).filter(Boolean).length;
       const max = Number(assertion.value);
@@ -55,6 +79,19 @@ export function evaluateAssertion(
           tokenCount <= max
             ? undefined
             : `Token count ${tokenCount} exceeds max ${max}`,
+      };
+    }
+
+    case 'min_tokens': {
+      const tokenCount = output.split(/\s+/).filter(Boolean).length;
+      const min = Number(assertion.value);
+      return {
+        type: 'min_tokens',
+        passed: tokenCount >= min,
+        reason:
+          tokenCount >= min
+            ? undefined
+            : `Token count ${tokenCount} is below min ${min}`,
       };
     }
 
@@ -93,6 +130,13 @@ export function evaluateAssertion(
         };
       }
     }
+
+    case 'llm_rubric':
+      return {
+        type: 'llm_rubric',
+        passed: true,
+        reason: 'llm_rubric: manual review required',
+      };
 
     default:
       return {
