@@ -5,18 +5,26 @@ export type AssertionType =
   | 'contains'
   | 'not_contains'
   | 'regex'
+  | 'starts_with'
+  | 'ends_with'
   | 'max_tokens'
+  | 'min_tokens'
   | 'json_valid'
-  | 'json_contains';
+  | 'json_contains'
+  | 'llm_rubric';
 
 export const AssertionTypeSchema = z.enum([
   'exact',
   'contains',
   'not_contains',
   'regex',
+  'starts_with',
+  'ends_with',
   'max_tokens',
+  'min_tokens',
   'json_valid',
   'json_contains',
+  'llm_rubric',
 ]);
 
 export const AssertionSchema = z.object({
