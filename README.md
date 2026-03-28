@@ -1,5 +1,10 @@
 # buildr-eval
 
+[![npm version](https://img.shields.io/npm/v/@buildrlab/buildr-eval)](https://www.npmjs.com/package/@buildrlab/buildr-eval)
+[![CI](https://github.com/buildrlab/buildr-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/buildrlab/buildr-eval/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@buildrlab/buildr-eval)](https://www.npmjs.com/package/@buildrlab/buildr-eval)
+[![node version](https://img.shields.io/node/v/@buildrlab/buildr-eval)](https://www.npmjs.com/package/@buildrlab/buildr-eval)
+
 Lightweight LLM evaluation runner with **BuildrFlags** feature flag gates.
 
 An open, independent alternative for testing and evaluating LLM outputs — built by [BuildrLab](https://buildrlab.com).
@@ -37,6 +42,17 @@ Run it:
 buildr-eval run my-evals.eval.yml
 ```
 
+## Why buildr-eval?
+
+Promptfoo and LangSmith are great when you need full evaluation suites, datasets, tracing, or hosted dashboards. buildr-eval is intentionally smaller:
+
+- **CLI-first + YAML config** for fast local iteration and CI checks.
+- **Minimal surface area** so you can audit and extend it easily.
+- **BuildrFlags gating** to turn whole suites on/off per environment without wiring custom logic.
+- **No vendor lock-in** — your evals live in repo, not a hosted UI.
+
+If you want heavier dataset management, experiment tracking, or hosted reporting, promptfoo/LangSmith are better fits. If you want lightweight, scriptable checks that run anywhere, buildr-eval is a good default.
+
 ## CLI Reference
 
 ```
@@ -47,15 +63,19 @@ buildr-eval run <config.yml> --reporter json  # Machine-readable JSON output
 
 ## Assertion Types
 
-| Type | Description |
-|------|-------------|
-| `exact` | Output must exactly match `value` (trimmed) |
-| `contains` | Output must contain `value` |
-| `not_contains` | Output must NOT contain `value` |
-| `regex` | Output must match regex `value` |
-| `max_tokens` | Word count must be ≤ `value` |
-| `json_valid` | Output must be valid JSON |
-| `json_contains` | JSON output must have `key` equal to `value` |
+| Type | Description | Example |
+|------|-------------|---------|
+| `exact` | Output must exactly match `value` (trimmed). | `type: exact<br>value: "hello"` |
+| `contains` | Output must contain `value`. | `type: contains<br>value: "fox"` |
+| `not_contains` | Output must NOT contain `value`. | `type: not_contains<br>value: "error"` |
+| `regex` | Output must match regex `value`. | `type: regex<br>value: "^Order #\\d+"` |
+| `max_tokens` | Whitespace token count must be ≤ `value`. | `type: max_tokens<br>value: 30` |
+| `json_valid` | Output must be valid JSON. | `type: json_valid` |
+| `json_contains` | Parsed JSON must have `key` equal to `value`. | `type: json_contains<br>key: "status"<br>value: "ok"` |
+
+Notes:
+- `max_tokens` counts whitespace-delimited tokens (not model tokenization).
+- `json_contains` checks a top-level key (no deep path support yet).
 
 ## BuildrFlags Integration
 
@@ -85,8 +105,25 @@ If the flag is **OFF**, the suite is gracefully skipped (not failed). If no `fla
 
 ## Providers
 
-- **Anthropic Claude** — fully supported (v0.1)
-- **OpenAI** — coming soon (v0.2)
+### Anthropic Claude (supported)
+
+```yaml
+provider:
+  type: anthropic
+  model: claude-3-haiku-20240307
+  apiKeyEnv: ANTHROPIC_API_KEY
+```
+
+### OpenAI (coming soon)
+
+The OpenAI provider is scaffolded but not yet implemented. For now, it will throw an error when invoked.
+
+```yaml
+provider:
+  type: openai
+  model: gpt-4o-mini
+  apiKeyEnv: OPENAI_API_KEY
+```
 
 ## Programmatic Usage
 
@@ -96,6 +133,12 @@ import { runEval } from '@buildrlab/buildr-eval';
 const result = await runEval('config.yml');
 console.log(`Passed: ${result.passed}/${result.totalTests}`);
 ```
+
+## Roadmap
+
+- OpenAI provider (v0.2)
+- HTML reporter
+- CI integration guide
 
 ## License
 
