@@ -56,6 +56,32 @@ describe('evaluateAssertion', () => {
     });
   });
 
+  describe('starts_with', () => {
+    it('passes when output starts with value', () => {
+      const result = evaluateAssertion('hello world', { type: 'starts_with', value: 'hello' });
+      expect(result.passed).toBe(true);
+    });
+
+    it('fails when output does not start with value', () => {
+      const result = evaluateAssertion('hello world', { type: 'starts_with', value: 'world' });
+      expect(result.passed).toBe(false);
+      expect(result.reason).toContain('start with');
+    });
+  });
+
+  describe('ends_with', () => {
+    it('passes when output ends with value', () => {
+      const result = evaluateAssertion('hello world', { type: 'ends_with', value: 'world' });
+      expect(result.passed).toBe(true);
+    });
+
+    it('fails when output does not end with value', () => {
+      const result = evaluateAssertion('hello world', { type: 'ends_with', value: 'hello' });
+      expect(result.passed).toBe(false);
+      expect(result.reason).toContain('end with');
+    });
+  });
+
   describe('max_tokens', () => {
     it('passes when token count is within limit', () => {
       const result = evaluateAssertion('one two three', { type: 'max_tokens', value: 5 });
@@ -66,6 +92,19 @@ describe('evaluateAssertion', () => {
       const result = evaluateAssertion('one two three four five six', { type: 'max_tokens', value: 3 });
       expect(result.passed).toBe(false);
       expect(result.reason).toContain('exceeds max');
+    });
+  });
+
+  describe('min_tokens', () => {
+    it('passes when token count meets minimum', () => {
+      const result = evaluateAssertion('one two three', { type: 'min_tokens', value: 3 });
+      expect(result.passed).toBe(true);
+    });
+
+    it('fails when token count is below minimum', () => {
+      const result = evaluateAssertion('one two', { type: 'min_tokens', value: 3 });
+      expect(result.passed).toBe(false);
+      expect(result.reason).toContain('below min');
     });
   });
 
@@ -106,6 +145,14 @@ describe('evaluateAssertion', () => {
       );
       expect(result.passed).toBe(false);
       expect(result.reason).toContain('not valid JSON');
+    });
+  });
+
+  describe('llm_rubric', () => {
+    it('always passes', () => {
+      const result = evaluateAssertion('anything', { type: 'llm_rubric' });
+      expect(result.passed).toBe(true);
+      expect(result.reason).toContain('manual review');
     });
   });
 });

@@ -1,0 +1,33 @@
+# A/B Test Example
+# Run with: buildr-eval compare docs/examples/ab-test-a.yml docs/examples/ab-test-b.yml
+# This file documents the A side of an A/B test
+
+name: ab-test-variant-a
+provider:
+  type: anthropic
+  model: claude-3-haiku-20240307
+  apiKeyEnv: ANTHROPIC_API_KEY
+tests:
+  - name: summarize-short
+    prompt: "Summarize 'The quick brown fox jumps over the lazy dog' in 5 words or less"
+    assert:
+      - type: max_tokens
+        value: 10
+
+  - name: json-structured
+    prompt: "Return JSON with key 'result' set to 'success'"
+    assert:
+      - type: json_valid
+      - type: json_contains
+        key: result
+        value: success
+
+  - name: code-generation
+    prompt: "Write a TypeScript function that adds two numbers"
+    assert:
+      - type: contains
+        value: "function"
+      - type: contains
+        value: "return"
+      - type: min_tokens
+        value: 5
